@@ -12,7 +12,7 @@ cp config.js.example config.js
 ```
 
 Edit `config.js` with your telegram bot token and your telegram ID. Don't forget to start a bot chat in Telegram.
-Also, change `logFile` to Chia log file on your system. It should be configured to contain INFO messages.
+Also, change `logFile` to Chia log filepath on your system. It should be configured to contain INFO messages.
 
 ## Start:
 
