@@ -16,7 +16,7 @@ obserser.on("file-updated", log => {
 	}
 
 	const eligible = /([1-9]{1}[0-9]*) plots were/
-	const eligiblefound = log.message.match(proofs)
+	const eligiblefound = log.message.match(eligible)
 
 	if(eligiblefound && eligiblefound.length) {
 		console.log(eligiblefound[1] + " were eligible")
