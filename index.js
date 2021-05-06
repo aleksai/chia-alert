@@ -22,7 +22,7 @@ obserser.on("file-updated", log => {
 	const totalfound = log.message.match(total)
 
 	if(eligiblefound && eligiblefound.length && total && totalfound.length) {
-		console.log(eligiblefound[1] + " were eligible, total " + totalfound[1])
+		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1])
 	}
 
 	if(message) {
