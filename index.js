@@ -15,6 +15,13 @@ obserser.on("file-updated", log => {
 		message = "✅"
 	}
 
+	const eligible = /([1-9]{1}[0-9]*) plots were/
+	const eligiblefound = log.message.match(proofs)
+
+	if(eligiblefound.length) {
+		console.log(eligiblefound[1] + " were eligible")
+	}
+
 	if(message) {
 		if(config.telegramToken) Telegram(message)
 	}
