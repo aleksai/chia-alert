@@ -5,6 +5,8 @@ const config = require("./config")
 
 const obserser = new Obserser()
 
+var currentTotal = 0
+
 obserser.on("file-updated", log => {
 	var message = false
 
@@ -22,6 +24,12 @@ obserser.on("file-updated", log => {
 	const totalfound = log.message.match(total)
 
 	if(eligiblefound && eligiblefound.length && total && totalfound.length) {
+		const newTotal = parseInt(totalfound[1], 10)
+		if(currentTotal !== newTotal) {
+			if(currentTotal > 0) Telegram("New plot: " + newTotal)
+			currentTotal = newTotal
+		}
+
 		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1])
 	}
 
