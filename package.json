@@ -1,0 +1,16 @@
+{
+  "name": "chiaalert",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^3.5.1",
+    "read-last-lines": "^1.8.0",
+    "telegram-bot-api": "^2.0.1"
+  }
+}
