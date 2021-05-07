@@ -27,7 +27,7 @@ tail.stdout.on("data", function (data) {
 	const totalfound = line.match(total)
 
 	const time = /Time: ([0-9.]*)/
-	const timefound = line.match(total)
+	const timefound = line.match(time)
 
 	if(eligiblefound && eligiblefound.length && total && totalfound.length && time && timefound.length) {
 		const newTotal = parseInt(totalfound[1], 10)
