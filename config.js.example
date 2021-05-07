@@ -3,6 +3,6 @@ module.exports = {
 	telegramToken: "",
 	telegramUserId: 123,
 
-	logFile: "/home/chiaminer/.chia/mainnet/log/debug.log"
+	logFolder: "/home/chiaminer/.chia/mainnet/log"
 
 }

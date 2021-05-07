@@ -1,27 +1,30 @@
 const Telegram = require("./telegram")
-const Obserser = require("./observer")
+const { spawn } = require("child_process")
 
 const config = require("./config")
 
-const obserser = new Obserser()
-
 var currentTotal = 0
 
-obserser.on("file-updated", log => {
+const tail = spawn("tail", ["-F", config.logFolder + "/debug.log"])
+
+tail.stdout.on("data", function (data) {
+	const file = data.toString("utf-8").split("\n")
+	const line = file[file.length - 1]
+
 	var message = false
 
 	const proofs = /([1-9]{1}[0-9]*) proofs/
-	const found = log.message.match(proofs)
+	const found = line.match(proofs)
 
 	if(found && found.length) {
 		message = "✅"
 	}
 
 	const eligible = /([1-9]{1}[0-9]*) plots were/
-	const eligiblefound = log.message.match(eligible)
+	const eligiblefound = line.match(eligible)
 
 	const total = /Total ([0-9]*) plots/
-	const totalfound = log.message.match(total)
+	const totalfound = line.match(total)
 
 	if(eligiblefound && eligiblefound.length && total && totalfound.length) {
 		const newTotal = parseInt(totalfound[1], 10)
@@ -37,5 +40,3 @@ obserser.on("file-updated", log => {
 		if(config.telegramToken) Telegram(message)
 	}
 })
-
-obserser.watchFile(config.logFile)
