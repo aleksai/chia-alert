@@ -9,7 +9,7 @@ const tail = spawn("tail", ["-F", config.logFolder + "/debug.log"])
 
 tail.stdout.on("data", function (data) {
 	const file = data.toString("utf-8").split("\n")
-	const line = file[file.length - 1]
+	const line = file[file.length - 2]
 
 	var message = false
 
