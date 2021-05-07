@@ -8,6 +8,7 @@ Tiny tool to be automatically notificated when your Chia reward has come.
 cd ~
 git clone https://github.com/lenyapugachev/chia-alert.git
 cd chia-alert
+npm i
 cp config.js.example config.js
 ```
 
