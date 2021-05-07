@@ -26,14 +26,17 @@ tail.stdout.on("data", function (data) {
 	const total = /Total ([0-9]*) plots/
 	const totalfound = line.match(total)
 
-	if(eligiblefound && eligiblefound.length && total && totalfound.length) {
+	const time = /Time: ([0-9.]*)/
+	const timefound = line.match(total)
+
+	if(eligiblefound && eligiblefound.length && total && totalfound.length && time && timefound.length) {
 		const newTotal = parseInt(totalfound[1], 10)
 		if(currentTotal !== newTotal) {
 			if(currentTotal > 0) Telegram("New plot: " + newTotal)
 			currentTotal = newTotal
 		}
 
-		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1])
+		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1] + ", time: " + timefound[1])
 	}
 
 	const warning = /WARNING/
