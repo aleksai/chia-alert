@@ -36,6 +36,13 @@ tail.stdout.on("data", function (data) {
 		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1])
 	}
 
+	const warning = /WARNING/
+	const totalwarning = line.match(warning)
+
+	if(totalwarning) {
+		console.log("\x1b[31m", line, "\x1b[0m")
+	}
+
 	if(message) {
 		if(config.telegramToken) Telegram(message)
 	}
