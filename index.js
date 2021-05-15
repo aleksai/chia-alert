@@ -4,6 +4,11 @@ const { spawn } = require("child_process")
 const config = require("./config")
 
 var currentTotal = 0
+var syncTimer
+
+var trackDate = new Date()
+var trackCount = 0
+var proofCount = 0
 
 const tail = spawn("tail", ["-F", config.logFolder + "/debug.log"])
 
@@ -11,15 +16,19 @@ tail.stdout.on("data", function (data) {
 	const file = data.toString("utf-8").split("\n")
 	const line = file[file.length - 2]
 
-	var coin = false
+	// Proofs
+
+	var proof = false
 
 	const proofs = /([1-9]{1}[0-9]*) proofs/
 	const found = line.match(proofs)
 
 	if(found && found.length) {
 		if(config.telegramToken) Telegram("🍀")
-		coin = true
+		proof = true
 	}
+
+	// Count plots
 
 	const eligible = /([1-9]{1}[0-9]*) plots were/
 	const eligiblefound = line.match(eligible)
@@ -37,9 +46,39 @@ tail.stdout.on("data", function (data) {
 			currentTotal = newTotal
 		}
 
-		if(coin) console.log("\x1b[32m")
+		trackCount += parseInt(eligiblefound[1], 10)
+
+		if(proof) {
+			proofCount++
+			console.log("\x1b[32m")
+		}
 		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1] + ", time: " + timefound[1], "\x1b[0m")
 	}
+
+	// Stats
+
+	const currentDate = new Date()
+
+	if(trackDate - currentDate > 60 * 60 * 1000) {
+		console.log("\x1b[40m\x1b[33m", "Stats: " + trackCount + " proofs seeked, " + proofCount + " proofs found", "\x1b[0m")
+		
+		trackDate = currentDate
+		trackCount = 0
+		proofCount = 0
+	}
+
+	// Check gap between challenges
+
+	if(total && totalfound.length){
+		if(syncTimer) clearTimeout(syncTimer)
+
+		syncTimer = setTimeout(function(){
+			Telegram("🚨")
+			console.log("\x1b[31m", "[" + (new Date).toLocaleString() + "] " + "Sync failure?", "\x1b[0m")
+		}, 2 * 60 * 1000)
+	}
+
+	// Warnings
 
 	const warning = /WARNING/
 	const totalwarning = line.match(warning)
@@ -47,4 +86,5 @@ tail.stdout.on("data", function (data) {
 	if(totalwarning) {
 		console.log("\x1b[31m", line, "\x1b[0m")
 	}
+	
 })
