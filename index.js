@@ -39,7 +39,7 @@ tail.stdout.on("data", function (data) {
 	const time = /Time: ([0-9.]*)/
 	const timefound = line.match(time)
 
-	if(eligiblefound && eligiblefound.length && total && totalfound.length && time && timefound.length) {
+	if(eligiblefound && eligiblefound.length && totalfound && totalfound.length && timefound && timefound.length) {
 		const newTotal = parseInt(totalfound[1], 10)
 		if(currentTotal !== newTotal) {
 			if(currentTotal > 0 && config.telegramToken) Telegram(newTotal + " 🚜")
