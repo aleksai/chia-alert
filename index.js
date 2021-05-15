@@ -11,13 +11,14 @@ tail.stdout.on("data", function (data) {
 	const file = data.toString("utf-8").split("\n")
 	const line = file[file.length - 2]
 
-	var message = false
+	var coin = false
 
 	const proofs = /([1-9]{1}[0-9]*) proofs/
 	const found = line.match(proofs)
 
 	if(found && found.length) {
-		message = "🍀"
+		if(config.telegramToken) Telegram("🍀")
+		coin = true
 	}
 
 	const eligible = /([1-9]{1}[0-9]*) plots were/
@@ -32,11 +33,12 @@ tail.stdout.on("data", function (data) {
 	if(eligiblefound && eligiblefound.length && total && totalfound.length && time && timefound.length) {
 		const newTotal = parseInt(totalfound[1], 10)
 		if(currentTotal !== newTotal) {
-			if(currentTotal > 0) Telegram("New plot: " + newTotal)
+			if(currentTotal > 0 && config.telegramToken) Telegram(newTotal + " 🚜")
 			currentTotal = newTotal
 		}
 
-		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1] + ", time: " + timefound[1])
+		if(coin) console.log("\x1b[32m")
+		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1] + ", time: " + timefound[1], "\x1b[0m")
 	}
 
 	const warning = /WARNING/
@@ -44,9 +46,5 @@ tail.stdout.on("data", function (data) {
 
 	if(totalwarning) {
 		console.log("\x1b[31m", line, "\x1b[0m")
-	}
-
-	if(message) {
-		if(config.telegramToken) Telegram(message)
 	}
 })
