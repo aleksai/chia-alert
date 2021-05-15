@@ -69,7 +69,7 @@ tail.stdout.on("data", function (data) {
 
 	// Check gap between challenges
 
-	if(total && totalfound.length){
+	if(totalfound && totalfound.length){
 		if(syncTimer) clearTimeout(syncTimer)
 
 		syncTimer = setTimeout(function(){
