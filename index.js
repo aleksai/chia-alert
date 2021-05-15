@@ -17,7 +17,7 @@ tail.stdout.on("data", function (data) {
 	const found = line.match(proofs)
 
 	if(found && found.length) {
-		message = "✅"
+		message = "🍀"
 	}
 
 	const eligible = /([1-9]{1}[0-9]*) plots were/
