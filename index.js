@@ -59,7 +59,7 @@ tail.stdout.on("data", function (data) {
 
 	const currentDate = new Date()
 
-	if(trackDate - currentDate > 60 * 60 * 1000) {
+	if(currentDate - trackDate > 60 * 60 * 1000) {
 		console.log("\x1b[40m\x1b[33m", "Stats: " + trackCount + " proofs seeked, " + proofCount + " proofs found", "\x1b[0m")
 		
 		trackDate = currentDate
