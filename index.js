@@ -84,7 +84,12 @@ tail.stdout.on("data", function (data) {
 	const totalwarning = line.match(warning)
 
 	if(totalwarning) {
-		console.log("\x1b[31m", line, "\x1b[0m")
+		if(
+			!line.includes("Err.DOUBLE_SPEND") &&
+			!line.includes("Err.COIN_AMOUNT_NEGATIVE")
+		) {
+			console.log("\x1b[31m", line, "\x1b[0m")
+		}
 	}
 	
 })
