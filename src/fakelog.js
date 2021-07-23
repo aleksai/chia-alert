@@ -18,15 +18,23 @@ function appendLine(message) {
 var plots = 100
 
 setInterval(function () {
-	if(Math.random() < 0.75) {
+	const ran = Math.random()
+	
+	if(ran > 0.98) {
+		appendLine(new Date().toISOString() + " full_node full_node_server        : INFO    🍀 ️Farmed unfinished_block ab1ab1ab1, SP: e0example, ")
+	} else if(ran > 0.96) {
+		appendLine(new Date().toISOString() + " full_node full_node_server        : ERROR    Exception: Failed to fetch block 613170 from {'host': '220.132.79.154', 'port': 8444}, timed out <class 'ValueError'>, closing connection {'host': '220.132.79.154', 'port': 8444}. Traceback (most recent call last):")
+	} else if(ran > 0.94) {
+		appendLine(new Date().toISOString() + " full_node full_node_server        : WARNING  Cannot write to closing transport 217.66.160.107")
+	} else if(ran < 0.75) {
 		const elig = 3
-		const proofs = Math.random() < 0.9 ? 0 : 1
+		const proofs = Math.random() < 0.96 ? 0 : 1
 		const time = 0.123
 
-		plots++
+		if(Math.random() > 0.92) plots++
 
-		appendLine("2021-07-23T04:53:05.612 harvester chia.harvester.harvester: INFO     " + elig + " plots were eligible for farming f71c3375c9... Found " + proofs + " proofs. Time: " + time + " s. Total " + plots + " plots")
+		appendLine(new Date().toISOString() + " harvester chia.harvester.harvester: INFO     " + elig + " plots were eligible for farming f71c3375c9... Found " + proofs + " proofs. Time: " + time + " s. Total " + plots + " plots")
 	} else {
-		appendLine("2021-07-23T05:14:52.382 farmer chia.farmer.farmer         : INFO     Submitting partial for 33eef10078514a0f9e70c71c149ceb0674cfd6137729a8ba0f0ace14fa4a52de to https://asia1.pool.space")
+		appendLine(new Date().toISOString() + " farmer chia.farmer.farmer         : INFO     Submitting partial for 33eef10078514a0f9e70c71c149ceb0674cfd6137729a8ba0f0ace14fa4a52de to https://asia1.pool.space")
 	}
 }, 5000)

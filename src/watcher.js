@@ -1,40 +1,69 @@
 const { spawn } = require("child_process")
+const fs = require("fs")
 const homedir = require("os").homedir()
+const readLastLines = require("read-last-lines")
 
 const config = require("../config")
 
 const Telegram = require("./telegram")
 
+var timer, spawnprocess, watcherprocess
+var last_timecode = "0000-00-00T00:00:00.000"
 var currentTotal = 0
-var syncTimer
 
-var trackDate = new Date()
-var trackCount = 0
-var proofCount = 0
+var appData = "."
+var logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
 
-const tail = spawn("tail", ["-F", homedir + "/.chia/mainnet/log/debug.log"])
+const log = homedir + "/.chia/mainnet/log/debug.log"
 
-console.log("Starting to watch " + homedir + "/.chia/mainnet/log/debug.log...")
+if(process.platform === "win32") {
+	if(watcherprocess) fs.unwatchFile(log)
 
-tail.stdout.on("data", function (data) {
-	const file = data.toString("utf-8").split("\n")
-	const line = file[file.length - 2]
+	watcherprocess = fs.watchFile(log, async (curr, prev) => {
+		parseLine(await readLastLines.read(log, 2))
+	})
+} else {
+	if(spawnprocess) spawnprocess.kill()
 
-	// Proofs
+	spawnprocess = spawn("tail", ["-F", log])
+	spawnprocess.stdout.on("data", (data) => {
+		const file = data.toString("utf-8").split("\n")
+		const line = file[file.length - 2]
 
-	var proof = false
+		parseLine(line)
+	})
+}
+
+function applog(...lines) {
+	console.log(lines.join(" "))
+
+	logger.write(lines.join(" ") + "\n")
+}
+
+function farmingTimer() {
+	if(timer) clearTimeout(timer)
+
+	timer = setTimeout(function() {
+		if(connected) {
+			Telegram("🚨")
+
+			applog("\x1b[31m", "[" + (new Date).toLocaleString() + "] " + "Sync failure or you should 'chia configure -log-level INFO'", "\x1b[0m")
+		} else farmingTimer()
+	}, 120000)
+}
+
+function parseLine(line) {
+	if(!line) return
+
+	const timecode = /([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3})/
+	const timecodefound = line.match(timecode)
+
+	// Proofs and Plots
 
 	const proofs = /([1-9]{1}[0-9]*) proofs/
 	const found = line.match(proofs)
 
-	if(found && found.length) {
-		if(config.telegramToken) Telegram("🍀")
-		proof = true
-	}
-
-	// Count plots
-
-	const eligible = /([1-9]{1}[0-9]*) plots were/
+	const eligible = /([0-9]{1}[0-9]*) plots were/
 	const eligiblefound = line.match(eligible)
 
 	const total = /Total ([0-9]*) plots/
@@ -43,46 +72,74 @@ tail.stdout.on("data", function (data) {
 	const time = /Time: ([0-9.]*)/
 	const timefound = line.match(time)
 
-	if(eligiblefound && eligiblefound.length && totalfound && totalfound.length && timefound && timefound.length) {
+	if(timecodefound && timecodefound.length && timecodefound[1] > last_timecode && eligiblefound && eligiblefound.length && totalfound && totalfound.length && timefound && timefound.length) {
+		last_timecode = timecodefound[1]
+
 		const newTotal = parseInt(totalfound[1], 10)
+
 		if(currentTotal !== newTotal) {
-			if(currentTotal > 0 && config.telegramToken) Telegram(newTotal + " 🚜")
+			if(currentTotal > 0) Telegram(newTotal + " 🚜")
 			currentTotal = newTotal
 		}
 
-		trackCount += parseInt(eligiblefound[1], 10)
+		// socket.emit("elig", JSON.stringify({ 
+		// 	timecode: timecodefound[1], 
+		// 	eligs: eligiblefound[1], 
+		// 	proofs: (found && found.length) ? found[1] : 0, 
+		// 	plots: totalfound[1], 
+		// 	time: timefound[1]
+		// }))
 
-		if(proof) {
-			proofCount++
-			console.log("\x1b[32m")
-		}
-		console.log("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1] + ", time: " + timefound[1], "\x1b[0m")
+		farmingTimer()
+
+		if(eligiblefound[1] !== "0")
+			applog("[" + (new Date).toLocaleString() + "] " + eligiblefound[1] + " were eligible, total " + totalfound[1] + ", time: " + timefound[1], "\x1b[0m")
+	
+		if(found && found.length)
+			applog("\x1b[32m" + "[" + (new Date).toLocaleString() + "] " + found[1] + " proofs found", "\x1b[0m")
 	}
 
-	// Stats
+	// Partials
 
-	const currentDate = new Date()
+	const partial = /Submitting partial for ([0-9a-f]*) to (https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))/
+	const partialfound = line.match(partial)
 
-	if(currentDate - trackDate > 60 * 60 * 1000) {
-		console.log("\x1b[40m\x1b[33m", "Stats: " + trackCount + " proofs seeked, " + proofCount + " proofs found", "\x1b[0m")
-		
-		trackDate = currentDate
-		trackCount = 0
-		proofCount = 0
+	if(timecodefound && timecodefound.length && timecodefound[1] > last_timecode && partialfound && partialfound.length > 2) {
+		last_timecode = timecodefound[1]
+
+		applog("\x1b[32m" + "[" + (new Date).toLocaleString() + "] " + partialfound[0], "\x1b[0m")
+
+		farmingTimer()
 	}
 
-	// Check gap between challenges
+	// Winning
 
-	if(totalfound && totalfound.length) {
-		if(syncTimer) clearTimeout(syncTimer)
+	const farmed = /Farmed unfinished_block/
+	const farmedfound = line.match(farmed)
 
-		syncTimer = setTimeout(function(){
-			Telegram("🚨")
-			console.log("\x1b[31m", "[" + (new Date).toLocaleString() + "] " + "Sync failure?", "\x1b[0m")
-		}, 2 * 60 * 1000)
+	if(farmedfound && farmedfound.length) {
+		applog("\x1b[32m" + "[" + (new Date).toLocaleString() + "] " + "We're just farmed a block!", "\x1b[0m")
+
+		Telegram("🍀")
 	}
 
-	// Warnings
+	// Warnings and Errors
+
+	const error = /ERROR/
+	const totalerror = line.match(error)
+
+	if(totalerror) {
+		// if(
+		// 	!line.includes("Err.DOUBLE_SPEND") &&
+		// 	!line.includes("Err.COIN_AMOUNT_NEGATIVE")
+		// ) {
+			if(timecodefound && timecodefound.length && timecodefound[1] >= last_timecode) {
+				const message = line.replace(timecodefound[1], "")
+
+				applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
+			}
+		// }
+	}
 
 	const warning = /WARNING/
 	const totalwarning = line.match(warning)
@@ -92,7 +149,11 @@ tail.stdout.on("data", function (data) {
 			!line.includes("Err.DOUBLE_SPEND") &&
 			!line.includes("Err.COIN_AMOUNT_NEGATIVE")
 		) {
-			console.log("\x1b[31m", line, "\x1b[0m")
+			if(timecodefound && timecodefound.length && timecodefound[1] >= last_timecode) {
+				const message = line.replace(timecodefound[1], "")
+
+				applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
+			}
 		}
 	}
-})
+}

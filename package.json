@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon ./src/fakelog & nodemon .",
+    "dev": "node ./src/fakelog & nodemon .",
     "start": "forever start .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
