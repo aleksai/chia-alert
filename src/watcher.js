@@ -12,7 +12,11 @@ var last_timecode = "0000-00-00T00:00:00.000"
 var currentTotal = 0
 
 var appData = "."
-var logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
+var logger
+
+if(process.platform === "win32") {
+	logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
+}
 
 const log = homedir + "/.chia/mainnet/log/debug.log"
 
@@ -37,7 +41,7 @@ if(process.platform === "win32") {
 function applog(...lines) {
 	console.log(lines.join(" "))
 
-	logger.write(lines.join(" ") + "\n")
+	if(logger) logger.write(lines.join(" ") + "\n")
 }
 
 function farmingTimer() {
@@ -54,6 +58,8 @@ function farmingTimer() {
 
 function parseLine(line) {
 	if(!line) return
+
+	console.log(line)
 
 	const timecode = /([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3})/
 	const timecodefound = line.match(timecode)

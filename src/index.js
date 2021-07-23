@@ -1,5 +1,3 @@
-const Telegram = require("./telegram")
-
 var exited = false
 
 require("./watcher")
