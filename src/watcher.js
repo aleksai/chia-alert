@@ -1,7 +1,9 @@
-const Telegram = require("./telegram")
 const { spawn } = require("child_process")
+const homedir = require("os").homedir()
 
-const config = require("./config")
+const config = require("../config")
+
+const Telegram = require("./telegram")
 
 var currentTotal = 0
 var syncTimer
@@ -10,7 +12,9 @@ var trackDate = new Date()
 var trackCount = 0
 var proofCount = 0
 
-const tail = spawn("tail", ["-F", config.logFolder + "/debug.log"])
+const tail = spawn("tail", ["-F", homedir + "/.chia/mainnet/log/debug.log"])
+
+console.log("Starting to watch " + homedir + "/.chia/mainnet/log/debug.log...")
 
 tail.stdout.on("data", function (data) {
 	const file = data.toString("utf-8").split("\n")
@@ -69,7 +73,7 @@ tail.stdout.on("data", function (data) {
 
 	// Check gap between challenges
 
-	if(totalfound && totalfound.length){
+	if(totalfound && totalfound.length) {
 		if(syncTimer) clearTimeout(syncTimer)
 
 		syncTimer = setTimeout(function(){
@@ -91,5 +95,4 @@ tail.stdout.on("data", function (data) {
 			console.log("\x1b[31m", line, "\x1b[0m")
 		}
 	}
-	
 })

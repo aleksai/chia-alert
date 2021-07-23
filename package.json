@@ -1,9 +1,11 @@
 {
-  "name": "chiaalert",
+  "name": "chia-alert",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "dev": "nodemon ./src/fakelog & nodemon .",
+    "start": "forever start .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
