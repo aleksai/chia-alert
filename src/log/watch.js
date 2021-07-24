@@ -3,7 +3,7 @@ const fs = require("fs")
 const homedir = require("os").homedir()
 const readLastLines = require("read-last-lines")
 
-const config = require("../config")
+const config = require("../../config")
 
 var Telegram, DB
 

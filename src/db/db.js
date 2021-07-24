@@ -5,7 +5,7 @@ var db
 
 async function init() {
 	db = await open({
-		filename: "db.sqlite",
+		filename: "../db.sqlite",
 		driver: sqlite3.Database
 	})
 }
