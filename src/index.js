@@ -1,8 +1,9 @@
 const Telegram = require("./telegram")
+const DB = require("./db")
 
 var exited = false
 
-require("./watcher")(Telegram)
+require("./watcher")(Telegram, DB)
 
 function exitHandler(options, exitCode) {
 	if(exited) return
