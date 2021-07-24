@@ -1,6 +1,6 @@
 {
   "name": "chia-alert",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chokidar": "^3.5.1",
     "forever": "^4.0.1",
     "read-last-lines": "^1.8.0",
     "telegram-bot-api": "^2.0.1"
