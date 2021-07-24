@@ -5,13 +5,15 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "node ./src/fakelog & nodemon .",
-    "start": "forever start .",
+    "start": "./node_modules/forever/bin/forever start . && ./node_modules/forever/bin/forever list",
+    "stop": "./node_modules/forever/bin/forever stop .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "chokidar": "^3.5.1",
+    "forever": "^4.0.1",
     "read-last-lines": "^1.8.0",
     "telegram-bot-api": "^2.0.1"
   }

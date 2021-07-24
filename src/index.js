@@ -1,6 +1,8 @@
+const Telegram = require("./telegram")
+
 var exited = false
 
-require("./watcher")
+require("./watcher")(Telegram)
 
 function exitHandler(options, exitCode) {
 	if(exited) return

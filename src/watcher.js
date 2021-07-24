@@ -5,7 +5,7 @@ const readLastLines = require("read-last-lines")
 
 const config = require("../config")
 
-const Telegram = require("./telegram")
+var Telegram
 
 var timer, spawnprocess, watcherprocess
 var last_timecode = "0000-00-00T00:00:00.000"
@@ -14,28 +14,32 @@ var currentTotal = 0
 var appData = "."
 var logger
 
-if(process.platform === "win32") {
-	logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
-}
+module.exports = function(telegram) {
+	Telegram = telegram
+	
+	if(process.platform === "win32") {
+		logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
+	}
 
-const log = homedir + "/.chia/mainnet/log/debug.log"
+	const log = homedir + "/.chia/mainnet/log/debug.log"
 
-if(process.platform === "win32") {
-	if(watcherprocess) fs.unwatchFile(log)
+	if(process.platform === "win32") {
+		if(watcherprocess) fs.unwatchFile(log)
 
-	watcherprocess = fs.watchFile(log, async (curr, prev) => {
-		parseLine(await readLastLines.read(log, 2))
-	})
-} else {
-	if(spawnprocess) spawnprocess.kill()
+		watcherprocess = fs.watchFile(log, async (curr, prev) => {
+			parseLine(await readLastLines.read(log, 2))
+		})
+	} else {
+		if(spawnprocess) spawnprocess.kill()
 
-	spawnprocess = spawn("tail", ["-F", log])
-	spawnprocess.stdout.on("data", (data) => {
-		const file = data.toString("utf-8").split("\n")
-		const line = file[file.length - 2]
+		spawnprocess = spawn("tail", ["-F", log])
+		spawnprocess.stdout.on("data", (data) => {
+			const file = data.toString("utf-8").split("\n")
+			const line = file[file.length - 2]
 
-		parseLine(line)
-	})
+			parseLine(line)
+		})
+	}
 }
 
 function applog(...lines) {
@@ -48,11 +52,9 @@ function farmingTimer() {
 	if(timer) clearTimeout(timer)
 
 	timer = setTimeout(function() {
-		if(connected) {
-			Telegram("🚨")
+		Telegram("🚨")
 
-			applog("\x1b[31m", "[" + (new Date).toLocaleString() + "] " + "Sync failure or you should 'chia configure -log-level INFO'", "\x1b[0m")
-		} else farmingTimer()
+		applog("\x1b[31m", "[" + (new Date).toLocaleString() + "] " + "Sync failure or you should 'chia configure -log-level INFO'", "\x1b[0m")
 	}, 120000)
 }
 
