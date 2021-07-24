@@ -12,6 +12,12 @@ git clone https://github.com/alek-sai/chia-alert.git
 cd chia-alert
 npm i
 cp config.js.example config.js
+
+# Execute this to start:
+npm run start
+
+# To stop:
+npm run stop
 ```
 
 Edit `config.js` with your telegram bot token and your telegram ID. Don't forget to start a chat with bot in Telegram after bot initial creation. Instructions how to create your bot follow https://core.telegram.org/bots#6-botfather
@@ -19,15 +25,3 @@ Edit `config.js` with your telegram bot token and your telegram ID. Don't forget
 ## Install (Windows):
 
 *TODO*
-
-## Start:
-
-```
-npm run start
-```
-
-## Stop:
-
-```
-npm run stop
-```
