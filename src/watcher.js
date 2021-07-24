@@ -5,7 +5,7 @@ const readLastLines = require("read-last-lines")
 
 const config = require("../config")
 
-var Telegram
+var Telegram, DB
 
 var timer, spawnprocess, watcherprocess
 var last_timecode = "0000-00-00T00:00:00.000"
@@ -14,8 +14,9 @@ var currentTotal = 0
 var appData = "."
 var logger
 
-module.exports = function(telegram) {
+module.exports = function(telegram, db) {
 	Telegram = telegram
+	DB = db
 
 	if(process.platform === "win32") {
 		logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
@@ -60,7 +61,7 @@ function farmingTimer() {
 	}, 120000)
 }
 
-function parseLine(line) {
+async function parseLine(line) {
 	if(!line) return
 
 	const timecode = /([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3})/
@@ -87,16 +88,17 @@ function parseLine(line) {
 
 		if(currentTotal !== newTotal) {
 			if(currentTotal > 0) Telegram(newTotal + " 🚜")
+
 			currentTotal = newTotal
 		}
 
-		// socket.emit("elig", JSON.stringify({ 
-		// 	timecode: timecodefound[1], 
-		// 	eligs: eligiblefound[1], 
-		// 	proofs: (found && found.length) ? found[1] : 0, 
-		// 	plots: totalfound[1], 
-		// 	time: timefound[1]
-		// }))
+		await DB.insert("stats", { 
+			timecode: timecodefound[1], 
+			eligs: eligiblefound[1], 
+			proofs: (found && found.length) ? found[1] : 0, 
+			plots: totalfound[1], 
+			time: timefound[1]
+		})
 
 		farmingTimer()
 
@@ -115,6 +117,12 @@ function parseLine(line) {
 	if(timecodefound && timecodefound.length && timecodefound[1] > last_timecode && partialfound && partialfound.length > 2) {
 		last_timecode = timecodefound[1]
 
+		await DB.insert("partials", {
+			timecode: timecodefound[1],
+			launcher: partialfound[1], 
+			url: partialfound[2]
+		})
+
 		applog("\x1b[32m" + "[" + (new Date).toLocaleString() + "] " + partialfound[0], "\x1b[0m")
 
 		farmingTimer()
@@ -126,6 +134,10 @@ function parseLine(line) {
 	const farmedfound = line.match(farmed)
 
 	if(farmedfound && farmedfound.length) {
+		await DB.insert("winnings", {
+			timecode: timecodefound[1]
+		})
+
 		applog("\x1b[32m" + "[" + (new Date).toLocaleString() + "] " + "We're just farmed a block!", "\x1b[0m")
 
 		Telegram("🍀")
@@ -144,6 +156,11 @@ function parseLine(line) {
 			if(timecodefound && timecodefound.length && timecodefound[1] >= last_timecode) {
 				const message = line.replace(timecodefound[1], "")
 
+				await DB.insert("errors", {
+					message,
+					timecode: timecodefound[1]
+				})
+
 				applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
 			}
 		// }
@@ -159,6 +176,11 @@ function parseLine(line) {
 		) {
 			if(timecodefound && timecodefound.length && timecodefound[1] >= last_timecode) {
 				const message = line.replace(timecodefound[1], "")
+
+				await DB.insert("warnings", {
+					message,
+					timecode: timecodefound[1]
+				})
 
 				applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
 			}
