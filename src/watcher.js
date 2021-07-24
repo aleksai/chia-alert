@@ -16,7 +16,7 @@ var logger
 
 module.exports = function(telegram) {
 	Telegram = telegram
-	
+
 	if(process.platform === "win32") {
 		logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
 	}
@@ -60,8 +60,6 @@ function farmingTimer() {
 
 function parseLine(line) {
 	if(!line) return
-
-	console.log(line)
 
 	const timecode = /([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3})/
 	const timecodefound = line.match(timecode)
