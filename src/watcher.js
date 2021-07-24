@@ -23,6 +23,8 @@ module.exports = function(telegram) {
 
 	const log = homedir + "/.chia/mainnet/log/debug.log"
 
+	if(!fs.existsSync(log)) return applog("\x1b[31m" + "Log file doesn't exist", "\x1b[0m")
+
 	if(process.platform === "win32") {
 		if(watcherprocess) fs.unwatchFile(log)
 
@@ -54,7 +56,7 @@ function farmingTimer() {
 	timer = setTimeout(function() {
 		Telegram("🚨")
 
-		applog("\x1b[31m", "[" + (new Date).toLocaleString() + "] " + "Sync failure or you should 'chia configure -log-level INFO'", "\x1b[0m")
+		applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + "Sync failure or you should 'chia configure -log-level INFO'", "\x1b[0m")
 	}, 120000)
 }
 
