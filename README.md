@@ -1,6 +1,6 @@
 # ChiaAlert
 
-Tiny tool to be automatically notificated when your Chia rewards has come.
+Self-owned Telegram Chat bot to watch your Chia farm statistics, and got notifications on important events.
 
 ## Install (Linux/Mac OS):
 
@@ -20,7 +20,7 @@ npm run start
 npm run stop
 ```
 
-Edit `config.js` with your telegram bot token and your telegram ID. Don't forget to start a chat with bot in Telegram after bot initial creation. Instructions how to create your bot follow https://core.telegram.org/bots#6-botfather
+Now edit `config.js` with your telegram bot token and your telegram ID(if you don't know it, obtain with https://t.me/userinfobot). Instructions how to create your bot follow https://core.telegram.org/bots#6-botfather  Don't forget to start a chat with bot in Telegram after bot initial creation. 
 
 ## Install (Windows):
 
