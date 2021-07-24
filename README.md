@@ -14,7 +14,8 @@ npm i
 cp config.js.example config.js
 ```
 
-Now edit `config.js` with your telegram bot token and your telegram ID(if you don't know it, obtain with https://t.me/userinfobot). Instructions how to create your bot follow https://core.telegram.org/bots#6-botfather  Don't forget to start a chat with bot in Telegram after bot initial creation. 
+Now edit `config.js` with your telegram bot token and your telegram ID(if you don't know it, obtain with https://t.me/userinfobot). Instructions how to create your bot follow https://core.telegram.org/bots#6-botfather
+Don't forget to start a chat with bot in Telegram after bot initial creation. 
 
 ```
 # Execute this to start:
