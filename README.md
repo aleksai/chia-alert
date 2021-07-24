@@ -8,7 +8,7 @@ Self-owned Telegram Chat bot to watch your Chia farm statistics, and got notific
 
 ```
 cd ~
-git clone https://github.com/alek-sai/chia-alert.git
+git clone https://github.com/alek-sai/chia-alert.git -b release
 cd chia-alert
 npm i
 cp config.js.example config.js
