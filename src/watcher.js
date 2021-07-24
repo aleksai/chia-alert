@@ -11,15 +11,14 @@ var timer, spawnprocess, watcherprocess
 var last_timecode = "0000-00-00T00:00:00.000"
 var currentTotal = 0
 
-var appData = "."
 var logger
 
-module.exports = function(telegram, db) {
+module.exports = function(telegram, db, appData) {
 	Telegram = telegram
 	DB = db
 
 	if(process.platform === "win32") {
-		logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
+		if(appData) logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
 	}
 
 	const log = homedir + "/.chia/mainnet/log/debug.log"
@@ -54,8 +53,10 @@ function applog(...lines) {
 function farmingTimer() {
 	if(timer) clearTimeout(timer)
 
-	timer = setTimeout(function() {
+	timer = setTimeout(async function() {
 		Telegram("🚨")
+
+		await DB.insert("stalls", {})
 
 		applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + "Sync failure or you should 'chia configure -log-level INFO'", "\x1b[0m")
 	}, 120000)
