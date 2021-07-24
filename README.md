@@ -25,7 +25,10 @@ npm run start
 # To stop:
 npm run stop
 ```
-Start command will give you log file address, feel free to watch it, it's more clean than Chia one, to watch execute for example: `tail -f /home/user/.forever/qv31.log`
+Start command will give you log file address, feel free to watch it, it's more clean than Chia one, to watch execute for example:
+```
+tail -f /home/user/.forever/qv31.log
+```
 
 ## Install (Windows):
 
