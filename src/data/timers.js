@@ -1,19 +1,71 @@
-var Telegram
+const oneHourMs = 60 * 60 * 1000
 
-var Timers = function (DB, Storage) {
+module.exports = function (DB, Storage) {
 
-	return {
+	var Telegram
 
-		setTelegram: function(telegram) {
-			Telegram = telegram
+	var timers = []
+	var intervals = []
+
+	const summaries = {
+
+		plots: function() {
+
 		},
 
-		updateAll: function() {
+		warnings: function() {
+
+		},
+
+		errors: function() {
 
 		}
 
 	}
 
-}
+	const setTimer = function(timer) {
+		return setTimeout(function() {
+			intervals.push(setInterval(summaries[timer], oneHourMs * Storage.data[timer]))
+		}, msToNextHour())
+	}
 
-module.exports = Timers
+	const msToNextHour = function() {
+		var date = new Date()
+		date.setHours(date.getHours() + Math.round(date.getMinutes()/60))
+	    date.setMinutes(0, 0, 0)
+
+	    return Date.now() - date.getTime()
+	}
+
+	const updateAll = function() {
+		for (var i = 0; i < timers.length; i++) {
+			clearTimeout(timers[i])
+		}
+
+		for (var i = 0; i < intervals.length; i++) {
+			clearInterval(intervals[i])
+		}
+
+		timers = []
+		intervals = []
+
+		const summaryTimers = Object.keys(summaries)
+
+		for (var i = 0; i < summaryTimers.length; i++) {
+			timers.push(setTimer(summaryTimers[i]))
+		}
+	}
+
+	return {
+
+		setTelegram: function(telegram) {
+			Telegram = telegram
+
+			updateAll()
+		},
+
+		updateAll
+
+	}
+
+}
