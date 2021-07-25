@@ -8,7 +8,8 @@ var telegrambot
 function send(message) {
 	telegrambot.sendMessage({
 		chat_id: config.telegramUserId,
-		text: message
+		text: message,
+		parse_mode: "HTML"
 	}).catch(console.err)
 }
 
