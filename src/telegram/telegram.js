@@ -13,7 +13,7 @@ function send(message) {
 	}).catch(console.err)
 }
 
-module.exports = function (DB) {
+module.exports = function (DB, Storage, Timers) {
 	telegrambot = new telegram({ token: config.telegramToken })
 	telegrambot.setMessageProvider(new telegram.GetUpdateMessageProvider())
 		
@@ -23,7 +23,7 @@ module.exports = function (DB) {
 		const files = fs.readdirSync(__dirname + "/commands")
 
 		for (var i = 0; i < files.length; i++) {
-			require(__dirname + "/commands/" + files[i])(send, DB, update)
+			require(__dirname + "/commands/" + files[i])(send, DB, Storage, Timers, update)
 		}
 	})
 

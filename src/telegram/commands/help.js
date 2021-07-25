@@ -1,6 +1,6 @@
 const command = "/help"
 
-module.exports = function(Telegram, DB, update) {
+module.exports = function(Telegram, DB, Storage, Timers, update) {
 	if(update.message && update.message.text.startsWith(command)) {
 		Telegram("\
 			<b>Available commands:</b>\n\n\

@@ -3,3 +3,4 @@ package-lock.json
 config.js
 watcher.log
 db.sqlite
+storage.db

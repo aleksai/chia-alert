@@ -5,7 +5,7 @@ const readLastLines = require("read-last-lines")
 
 const config = require("../../config")
 
-var Telegram, DB
+var Telegram, DB, Storage
 
 var timer, spawnprocess, watcherprocess
 var last_timecode = "0000-00-00T00:00:00.000"
@@ -13,9 +13,10 @@ var currentTotal = 0
 
 var logger
 
-module.exports = function(telegram, db, appData) {
+module.exports = function(telegram, db, storage, appData) {
 	Telegram = telegram
 	DB = db
+	Storage = storage
 
 	if(process.platform === "win32") {
 		if(appData) logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
