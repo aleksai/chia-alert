@@ -76,12 +76,13 @@ const DB = {
 		return await db.all("SELECT * from " + table + " where id = ?", [id])
 	},
 
-	all: async function (table, filter) {
+	all: async function (table, filter, raw) {
 		filter = filter || false
+		raw = raw || false
 
 		if(!table) return false
 		
-		return await db.all("SELECT * from " + table + (filter ? (" where " + Object.keys(filter).join(" = ? AND ") + " = ?") : ""), Object.values(filter))
+		return await db.all("SELECT * from " + table + (raw ? raw : (filter ? (" where " + Object.keys(filter).join(" = ? AND ") + " = ?") : "")), filter ? Object.values(filter) : [])
 	}
 
 }

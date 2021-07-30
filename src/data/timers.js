@@ -1,58 +1,89 @@
-const oneHourMs = 60 * 60 * 1000
+const oneHourMs = 60 * 1000// * 60
 
 module.exports = function (DB, Storage) {
 
 	var Telegram
 
-	var timers = []
-	var intervals = []
-
 	const summaries = {
 
-		plots: function() {
+		plots: async function() {
+			const stats = await DB.all("stats", false, " where created > " + (Date.now() - (Storage.data.plots + 1) * oneHourMs))
 
+			
 		},
 
-		warnings: function() {
+		pooling: async function() {
+			const partials = await DB.all("partials", false, " where created > " + (Date.now() - (Storage.data.pooling + 1) * oneHourMs))
 
+			
 		},
 
-		errors: function() {
+		warnings: async function() {
+			const warnings = await DB.all("warnings", false, " where created > " + (Date.now() - (Storage.data.plots + 1) * oneHourMs))
 
+			
+		},
+
+		errors: async function() {
+			const errors = await DB.all("errors", false, " where created > " + (Date.now() - (Storage.data.plots + 1) * oneHourMs))
+
+			
 		}
 
 	}
 
+	var timers = {
+		plots: [],
+		pooling: [],
+		warnings: [],
+		errors: []
+	}
+
+	var intervals = {
+		plots: [],
+		pooling: [],
+		warnings: [],
+		errors: []
+	}
+
 	const setTimer = function(timer) {
-		return setTimeout(function() {
-			intervals.push(setInterval(summaries[timer], oneHourMs * Storage.data[timer]))
+		return Storage.data[timer] < 1 ? false : setTimeout(function() {
+			summaries[timer]()
+			intervals[timer].push(setInterval(summaries[timer], oneHourMs * Storage.data[timer]))
 		}, msToNextHour())
 	}
 
 	const msToNextHour = function() {
 		var date = new Date()
-		date.setHours(date.getHours() + Math.round(date.getMinutes()/60))
-	    date.setMinutes(0, 0, 0)
+		var rounded = new Date(Math.ceil(date.getTime() / oneHourMs) * oneHourMs)
 
-	    return Date.now() - date.getTime()
+		console.log(rounded)
+
+	    return rounded.getTime() - Date.now()
+	}
+
+	const update = function(timer) {
+		for (var i = 0; i < timers[timer].length; i++) {
+			clearTimeout(timers[timer][i])
+		}
+
+		for (var i = 0; i < intervals[timer].length; i++) {
+			clearInterval(intervals[timer][i])
+		}
+
+		timers[timer] = []
+		intervals[timer] = []
+
+		const timeout = setTimer(timer)
+
+		if(timeout) timers[timer].push(timeout)
 	}
 
 	const updateAll = function() {
-		for (var i = 0; i < timers.length; i++) {
-			clearTimeout(timers[i])
-		}
+		const summariesKeys = Object.keys(summaries)
 
-		for (var i = 0; i < intervals.length; i++) {
-			clearInterval(intervals[i])
-		}
-
-		timers = []
-		intervals = []
-
-		const summaryTimers = Object.keys(summaries)
-
-		for (var i = 0; i < summaryTimers.length; i++) {
-			timers.push(setTimer(summaryTimers[i]))
+		for (var i = 0; i < summariesKeys.length; i++) {
+			update(summariesKeys[i])
 		}
 	}
 

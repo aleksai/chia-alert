@@ -9,6 +9,7 @@ var Storage = {
 
 	data: data ? data : {
 		plots: 0,
+		pooling: 24,
 		warnings: -1,
 		errors: 1,
 	},
