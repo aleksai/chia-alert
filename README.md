@@ -38,6 +38,7 @@ tail -f /home/user/.forever/qv31.log
 
 - Stats(plotting, pooling, etc)
 - Русский язык (Russian locale)
+- Simple standalone app execution (Windows, Linux, MacOS)
 - Group chats bot integration
 - (Still considering sue to safety reasons) Farm control
 
