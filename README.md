@@ -40,6 +40,6 @@ tail -f /home/user/.forever/qv31.log
 - Русский язык (Russian locale)
 - Simple standalone app execution (Windows, Linux, MacOS)
 - Group chats bot integration
-- (Still considering sue to safety reasons) Farm control
+- (Still considering due to safety reasons) Farm control
 
 Add your suggestions about new functions in Issues.
