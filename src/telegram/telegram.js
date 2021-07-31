@@ -5,12 +5,23 @@ const config = require("../../config")
 
 var telegrambot
 
-function send(message) {
+function send(message, tries) {
+	tries = tries || 3
+
 	telegrambot.sendMessage({
 		chat_id: config.telegramUserId,
 		text: message,
 		parse_mode: "HTML"
-	}).catch(console.err)
+	})
+	.catch(error => {
+		console.log("\x1b[31m" + "Bot message error: " + error.description, "\x1b[0m")
+
+		if(tries === 1) return
+
+		setTimeout(() => {
+			send(message, tries - 1)
+		}, 10000)
+	})
 }
 
 module.exports = function (DB, Storage, Timers) {
@@ -30,10 +41,7 @@ module.exports = function (DB, Storage, Timers) {
 	telegrambot.start().then(() => {
 		console.log("Telegram ✅")
 
-		telegrambot.sendMessage({
-			chat_id: config.telegramUserId,
-			text: "✅ Chia Alert is running"
-		})
+		send("✅ <b>Chia Alert is running</b>")
 	}).catch(console.err)
 
 	return send
