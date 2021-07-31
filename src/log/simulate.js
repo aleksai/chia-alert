@@ -35,6 +35,9 @@ setInterval(function () {
 
 		appendLine(new Date().toISOString() + " harvester chia.harvester.harvester: INFO     " + elig + " plots were eligible for farming f71c3375c9... Found " + proofs + " proofs. Time: " + time + " s. Total " + plots + " plots")
 	} else {
-		appendLine(new Date().toISOString() + " farmer chia.farmer.farmer         : INFO     Submitting partial for 33eef10078514a0f9e70c71c149ceb0674cfd6137729a8ba0f0ace14fa4a52de to https://asia1.pool.space")
+		const ran = Math.random()
+		const launcher = ran > 0.5 ? "99abc10078514a0f9e70c71c149ceb0674cfd6137729a8ba0f0ace14fa409aeb" : "33eef10078514a0f9e70c71c149ceb0674cfd6137729a8ba0f0ace14fa4a52de"
+		const server = ran > 0.5 ? "asia1.pool.space" : "na1.pool.space"
+		appendLine(new Date().toISOString() + " farmer chia.farmer.farmer         : INFO     Submitting partial for " + launcher + " to https://" + server)
 	}
 }, 5000)
