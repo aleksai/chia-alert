@@ -33,3 +33,12 @@ tail -f /home/user/.forever/qv31.log
 ## Install (Windows):
 
 *TODO*
+
+## Roadmap:
+
+- Stats(plotting, pooling, etc)
+- Русский язык (Russian locale)
+- Group chats bot integration
+- (Still considering sue to safety reasons) Farm control
+
+Add your suggestions about new functions in Issues.
