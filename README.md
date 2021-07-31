@@ -2,6 +2,8 @@
 
 Self-hosted Telegram Chat bot to watch your Chia farm statistics, and got notifications on important events.
 
+<img src="https://i.ibb.co/qjRnP0K/screenshot.png" alt="Screenshot" width="500"/>
+
 ## Install (Linux/Mac OS):
 
 *Node.js and NPM must be installed.* Follow https://docs.npmjs.com/downloading-and-installing-node-js-and-npm for instructions.
