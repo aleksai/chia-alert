@@ -1,9 +1,13 @@
-const Telegram = require("./telegram")
-const DB = require("./db")
+const DB = require("./data/db")
+const Storage = require("./data/storage")
+const Timers = require("./data/timers")(DB, Storage)
+const Telegram = require("./telegram/telegram")(DB, Storage, Timers)
+
+Timers.setTelegram(Telegram)
 
 var exited = false
 
-require("./watcher")(Telegram, DB)
+require("./log/watch")(Telegram, DB, Storage)
 
 function exitHandler(options, exitCode) {
 	if(exited) return

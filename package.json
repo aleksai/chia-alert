@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "dev": "node ./src/fakelog & nodemon .",
+    "dev": "node ./src/log/simulate & nodemon .",
     "start": "./node_modules/forever/bin/forever start . && ./node_modules/forever/bin/forever list",
     "stop": "./node_modules/forever/bin/forever stop .",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -3,9 +3,9 @@ const fs = require("fs")
 const homedir = require("os").homedir()
 const readLastLines = require("read-last-lines")
 
-const config = require("../config")
+const config = require("../../config")
 
-var Telegram, DB
+var Telegram, DB, Storage
 
 var timer, spawnprocess, watcherprocess
 var last_timecode = "0000-00-00T00:00:00.000"
@@ -13,9 +13,10 @@ var currentTotal = 0
 
 var logger
 
-module.exports = function(telegram, db, appData) {
+module.exports = function(telegram, db, storage, appData) {
 	Telegram = telegram
 	DB = db
+	Storage = storage
 
 	if(process.platform === "win32") {
 		if(appData) logger = fs.createWriteStream(appData + "/watcher.log", { flags: "a" })
@@ -88,7 +89,7 @@ async function parseLine(line) {
 		const newTotal = parseInt(totalfound[1], 10)
 
 		if(currentTotal !== newTotal) {
-			if(currentTotal > 0) Telegram(newTotal + " 🚜")
+			if(currentTotal > 0 && Storage.data.plots === 0) Telegram(newTotal + " 🚜")
 
 			currentTotal = newTotal
 		}
@@ -150,41 +151,35 @@ async function parseLine(line) {
 	const totalerror = line.match(error)
 
 	if(totalerror) {
-		// if(
-		// 	!line.includes("Err.DOUBLE_SPEND") &&
-		// 	!line.includes("Err.COIN_AMOUNT_NEGATIVE")
-		// ) {
-			if(timecodefound && timecodefound.length && timecodefound[1] >= last_timecode) {
-				const message = line.replace(timecodefound[1], "")
+		if(timecodefound && timecodefound.length && timecodefound[1] >= last_timecode) {
+			const message = line.replace(timecodefound[1], "")
 
-				await DB.insert("errors", {
-					message,
-					timecode: timecodefound[1]
-				})
+			await DB.insert("errors", {
+				message,
+				timecode: timecodefound[1]
+			})
 
-				applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
-			}
-		// }
+			applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
+
+			if(Storage.data.errors === 0) Telegram("<pre>📛 " + message + "</pre>")
+		}
 	}
 
 	const warning = /WARNING/
 	const totalwarning = line.match(warning)
 
 	if(totalwarning) {
-		if(
-			!line.includes("Err.DOUBLE_SPEND") &&
-			!line.includes("Err.COIN_AMOUNT_NEGATIVE")
-		) {
-			if(timecodefound && timecodefound.length && timecodefound[1] >= last_timecode) {
-				const message = line.replace(timecodefound[1], "")
+		if(timecodefound && timecodefound.length && timecodefound[1] >= last_timecode) {
+			const message = line.replace(timecodefound[1], "")
 
-				await DB.insert("warnings", {
-					message,
-					timecode: timecodefound[1]
-				})
+			await DB.insert("warnings", {
+				message,
+				timecode: timecodefound[1]
+			})
 
-				applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
-			}
+			applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
+
+			if(Storage.data.warnings === 0) Telegram("<pre>📛 " + message + "</pre>")
 		}
 	}
 }

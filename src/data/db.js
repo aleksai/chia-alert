@@ -67,21 +67,34 @@ const DB = {
 		if(!table || !values) return false
 		if(!(await createTableIfNotExists(table))) return false
 
-		await db.exec("INSERT INTO " + table + " VALUES (null, " + generateValuesFor(table, values) + ", " + Date.now() + ")")
+		try {
+			await db.exec("INSERT INTO " + table + " VALUES (null, " + generateValuesFor(table, values) + ", " + Date.now() + ")")
+		} catch(e) {
+			return false
+		}
 	},
 
 	get: async function (table, id) {
 		if(!table || !id) return false
 
-		return await db.all("SELECT * from " + table + " where id = ?", [id])
+		try {
+			return await db.all("SELECT * from " + table + " where id = ?", [id])
+		} catch(e) {
+			return false
+		}
 	},
 
-	all: async function (table, filter) {
+	all: async function (table, filter, raw) {
 		filter = filter || false
+		raw = raw || false
 
 		if(!table) return false
 		
-		return await db.all("SELECT * from " + table + (filter ? (" where " + Object.keys(filter).join(" = ? AND ") + " = ?") : ""), Object.values(filter))
+		try {
+			return await db.all("SELECT * from " + table + (raw ? raw : (filter ? (" where " + Object.keys(filter).join(" = ? AND ") + " = ?") : "")), filter ? Object.values(filter) : [])
+		} catch(e) {
+			return false
+		}
 	}
 
 }
