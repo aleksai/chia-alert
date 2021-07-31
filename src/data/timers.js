@@ -2,7 +2,7 @@ const oneHourMs = 1000 * 60 * 60
 
 function pluralize(count, words) { // ["депутат", "депутата", "депутатов"]
     var cases = [2, 0, 1, 1, 1, 2]
-    return count + " " + words[(count % 100 > 4 && count % 100 < 20) ? 2 : cases[ Math.min(count % 10, 5)]]
+    return count + " " + words[(count % 100 > 4 && count % 100 < 20) ? 2 : cases[Math.min(count % 10, 5)]]
 }
 
 module.exports = function (DB, Storage) {
@@ -24,7 +24,7 @@ module.exports = function (DB, Storage) {
 				pluralize(stats.map(s => s.proofs).reduce((a, b) => a + b, 0), ["proof", "proofs", "proofs"]) + "</b> found, <b>" + partials.length + "</b> of which <b>" + 
 				pluralize(partials.length, ["was a partial", "were partials", "were partials"]) + "</b>, <b>" + 
 				pluralize(winnings.length, ["win! 🍀", "winnings", "winnings"]) + "</b>\nAverage plots access time: <b>" + 
-				(stats.map(s => s.time).reduce((a, b) => a + b, 0) / stats.length) + "s</b>"
+				(stats.map(s => s.time).reduce((a, b) => a + b, 0) / stats.length).toFixed(4) + "s</b>"
 
 			Telegram("🚜 <b>Farming stats for last " + Storage.data.plots + "h:</b>\n\n" + stat)
 		},
@@ -36,7 +36,7 @@ module.exports = function (DB, Storage) {
 			const launchers = partials.map(p => p.launcher)
 			const launchers_filtered = launchers.filter((i, p) => launchers.indexOf(i) === p)
 
-			const stat = launchers_filtered.map(l => "<pre>" + l.substr(0, 5) + "..." + l.substr(l.length - 5, 5) + "</pre> sent <b>" + partials.filter(p => p.launcher === l).length + " partials</b> to " + partials.filter(p => p.launcher === l)[0].url.replace("https://", "")).join("\n")
+			const stat = launchers_filtered.map(l => "<pre>" + l.substr(0, 5) + "..." + l.substr(l.length - 5, 5) + "</pre> sent <b>" + partials.filter(p => p.launcher === l).length + " partials</b> to " + partials.filter(p => p.launcher === l).sort((p1, p2) => p1.created > p2.created)[0].url.replace("https://", "")).join("\n")
 
 			Telegram("🏊‍♂️ <b>Pooling stats for last " + Storage.data.pooling + "h:</b>\n\n" + stat)
 		},
