@@ -3,7 +3,7 @@ const command = "/wins"
 module.exports = async function(Telegram, DB, Storage, Timers, update) {
 
 	if(update.message && update.message.text.startsWith(command)) {
-		const pagesize = 5
+		const pagesize = 20
 
 		function sendChunk(wins, page) {
 			page = page || 0
