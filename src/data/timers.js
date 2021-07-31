@@ -23,7 +23,8 @@ module.exports = function (DB, Storage) {
 				pluralize(stats.map(s => s.eligs).reduce((a, b) => a + b, 0), ["time", "times", "times"]) + "</b> plots been <b>eligible</b>\n<b>" + 
 				pluralize(stats.map(s => s.proofs).reduce((a, b) => a + b, 0), ["proof", "proofs", "proofs"]) + "</b> found, <b>" + partials.length + "</b> of which <b>" + 
 				pluralize(partials.length, ["was a partial", "were partials", "were partials"]) + "</b>, <b>" + 
-				pluralize(winnings.length, ["win! 🍀", "winnings", "winnings"]) + "</b>"
+				pluralize(winnings.length, ["win! 🍀", "winnings", "winnings"]) + "</b>\nAverage plots access time: <b>" + 
+				(stats.map(s => s.time).reduce((a, b) => a + b, 0) / stats.length) + "s</b>"
 
 			Telegram("🚜 <b>Farming stats for last " + Storage.data.plots + "h:</b>\n\n" + stat)
 		},
