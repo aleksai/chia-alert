@@ -1,6 +1,6 @@
 # ChiaAlert
 
-Self-owned Telegram Chat bot to watch your Chia farm statistics, and got notifications on important events.
+Self-hosted Telegram Chat bot to watch your Chia farm statistics, and got notifications on important events.
 
 ## Install (Linux/Mac OS):
 
@@ -43,3 +43,5 @@ tail -f /home/user/.forever/qv31.log
 - (Still considering due to safety reasons) Farm control
 
 Add your suggestions about new functions in Issues.
+
+Feel free to contact me for support (in Telegram of course): https://t.me/alek_sai
