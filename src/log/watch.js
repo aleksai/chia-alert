@@ -94,6 +94,11 @@ async function parseLine(line) {
 			currentTotal = newTotal
 		}
 
+		if(Storage.data.plots === 0) {
+			const time = parseFloat(timefound[1], 10)
+			if(time > 2) Telegram("⏱ Pay attention to your plot access time, it was " + time + "s just now")
+		}
+
 		await DB.insert("stats", { 
 			timecode: timecodefound[1], 
 			eligs: eligiblefound[1], 

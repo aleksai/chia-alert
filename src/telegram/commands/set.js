@@ -41,7 +41,7 @@ module.exports = function(Telegram, DB, Storage, Timers, update) {
 						Storage.set(args[0], value)
 						Timers.update(args[0])
 
-						Telegram("Setting '" + args[0] + "' now " + args[1])
+						Telegram("Timer <b>" + args[0] + "</b> now " + args[1] + "h")
 
 						return
 					}
