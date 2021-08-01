@@ -42,9 +42,9 @@ tail -f /home/user/.forever/qv31.log
 - Русский язык (Russian locale)
 - Simple standalone app execution (Windows, Linux, MacOS)
 - Group chats bot integration
+- Discord, Slack, Facebook
 - (Still considering due to safety reasons) Farm control
 
 Add your suggestions about new functions in Issues.
 
 Discord: https://discord.gg/UqaxDK9q
-Feel free to contact me for support (in Telegram of course): https://t.me/alek_sai
