@@ -46,4 +46,5 @@ tail -f /home/user/.forever/qv31.log
 
 Add your suggestions about new functions in Issues.
 
+Discord: https://discord.gg/UqaxDK9q
 Feel free to contact me for support (in Telegram of course): https://t.me/alek_sai
