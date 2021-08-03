@@ -82,8 +82,6 @@ module.exports = function (DB, Storage) {
 		var date = new Date()
 		var rounded = new Date(Math.ceil(date.getTime() / oneHourMs) * oneHourMs)
 
-		console.log(rounded)
-
 	    return rounded.getTime() - Date.now()
 	}
 

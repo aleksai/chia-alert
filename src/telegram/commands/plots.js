@@ -4,7 +4,7 @@ module.exports = function(Telegram, DB, Storage, Timers, update) {
 
 	if(update.message && update.message.text.startsWith(command)) {
 		Telegram("\
-			plots\
+			To be implemented\
 		")
 	}
 
