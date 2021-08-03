@@ -13,7 +13,7 @@ function exitHandler(options, exitCode) {
 	if(exited) return
 	exited = true
 
-    Telegram("🅾️ Chia Alert shutted down")
+    Telegram("🅾️ <b>Chia Alert shutted down</b>")
 
 	if (options.exit) {
 		setTimeout(function () {

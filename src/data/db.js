@@ -74,6 +74,16 @@ const DB = {
 		}
 	},
 
+	update: async function (table, id, set) {
+		if(!table || !id || !set) return false
+
+		try {
+			await db.run("UPDATE " + table + " SET " + Object.keys(set).map(s => s + " = ?").join(", ") + " where id = ?", ...Object.values(set), id)
+		} catch(e) {
+			return false
+		}
+	},
+
 	get: async function (table, id) {
 		if(!table || !id) return false
 
