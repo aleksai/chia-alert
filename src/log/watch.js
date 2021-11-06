@@ -96,7 +96,18 @@ async function parseLine(line) {
 
 		if(Storage.data.plots === 0) {
 			const time = parseFloat(timefound[1], 10)
-			if(time > 2) Telegram("⏱ Pay attention to your plot access time, it was " + time + "s just now")
+			if(time > 2) {
+				const message = "⏱ Pay attention to your plot access time, it was " + time + "s just now"
+
+				await DB.insert("warnings", {
+					message,
+					timecode: timecodefound[1]
+				})
+
+				applog("\x1b[31m" + "[" + (new Date).toLocaleString() + "] " + message, "\x1b[0m")
+
+				if(Storage.data.warnings === 0) Telegram("<pre>📛 " + message + "</pre>")
+			}
 		}
 
 		await DB.insert("stats", { 
